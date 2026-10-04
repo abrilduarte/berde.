@@ -1,0 +1,380 @@
+/* berde.: los bloques tienen el mismo nombre que las secciones de app.js (menu de cuenta, presupuesto, hoja del gasto…).
+   Primero celular; al final, los cambios para tablet (768 px) y computadora (1100 px).
+
+   Colores de la app: siempre usar estas variables */
+:root{
+  --bg:#F7F8F6; --surface:#FFFFFF; --primary:#356B67; --primary-dark:#2A5753;
+  --text:#1D292D; --text-2:#5F6C70; /* #738084 original, oscurecido para contraste */
+  --success:#6E9B87; --border:#E5EAE8; --tint:#E9F0EE; --danger:#A24B3B;
+}
+/* base */
+*{box-sizing:border-box}
+[hidden]{display:none !important} /* important: si no, un display:flex de una clase le gana a hidden */
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+p,h1,h2{margin:0}
+
+.app{position:relative;max-width:430px;min-height:100dvh;margin:0 auto}
+.screen{padding:28px 20px 48px;display:flex;flex-direction:column}
+
+/* pantalla principal: encabezado (saludo, título y total) */
+.greeting{font-size:15px;font-weight:500;color:var(--text-2);display:flex;align-items:center;gap:10px}
+/* Logo como en el favicon: cuadrado blanco con bordes redondeados */
+.mini-logo{width:34px;height:34px;flex:none;border-radius:9px;background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(29,41,45,.06);color:var(--primary);display:flex;align-items:center;justify-content:center}
+.mini-logo svg{width:20px;height:20px;margin-left:1px}
+
+/* menu de cuenta (#accBtn y #accMenu): el saludo es el botón; el margen negativo compensa el padding así el logo no se mueve */
+.acc{position:relative;display:flex}
+.acc-trigger{border:none;background:transparent;padding:6px 10px 6px 6px;margin:-6px;border-radius:12px;font-family:inherit;text-align:left;transition:background-color .15s ease}
+.acc-trigger:hover,.acc-trigger[aria-expanded="true"]{background:rgba(53,107,103,.07)}
+.acc-caret{flex:none;margin-left:-4px;transition:transform .3s cubic-bezier(.65,0,.35,1)}
+.acc-trigger[aria-expanded="true"] .acc-caret{transform:rotate(180deg)}
+.menu.acc-menu{top:calc(100% + 6px);left:0;width:264px}
+.acc-menu button,.acc-menu a{width:100%;height:44px;border:none;background:transparent;border-radius:10px;padding:0 12px;display:flex;align-items:center;justify-content:flex-start;gap:12px;font-size:15px;font-weight:500;text-align:left;text-decoration:none;color:var(--text);transition:background-color .15s ease}
+.acc-menu button:hover,.acc-menu a:hover{background:#F1F4F2}
+.acc-menu svg{flex:none;color:var(--text-2)}
+.acc-label{flex:1;min-width:0}
+.acc-value{font-size:14px;color:var(--text-2)}
+.acc-ext{display:flex}
+.acc-menu .acc-danger,.acc-menu .acc-danger svg{color:var(--danger)}
+.acc-head{padding:10px 12px 8px;font-size:16px;font-weight:700;color:var(--text);overflow-wrap:anywhere}
+.acc-sep{height:1px;margin:6px 4px;background:var(--border)}
+.acc-ver{padding:6px 12px 4px;font-size:12px;color:var(--text-2)}
+/* pantalla principal: título del período (#heading) y total (#total) */
+.period{font-size:17px;font-weight:600;margin-top:4px}
+.total{font-size:44px;line-height:1.1;font-weight:700;letter-spacing:-.025em;font-variant-numeric:tabular-nums;margin-top:6px}
+
+/* botón principal (.cta): Agregar gasto, Guardar, Descargar PDF… */
+.cta{transition:background-color .25s ease;width:100%;height:56px;border:none;border-radius:16px;background:var(--primary);color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px}
+.cta:hover{background:var(--primary-dark)}
+.cta:disabled{opacity:.45;cursor:default}
+.cta:disabled:hover{background:var(--primary)}
+
+/* "Agregar gasto" y "Definir presupuesto" (.actions): en fila si entran, si no uno debajo del otro */
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.actions .cta,.actions .btn-secondary{flex:1 1 auto;width:auto;margin-top:0;padding:0 22px;white-space:nowrap}
+.btn-secondary{height:56px;border:1px solid var(--primary);border-radius:16px;background:#FFFFFF;color:var(--primary);font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:background-color .25s ease}
+.btn-secondary:hover{background:var(--tint)}
+
+/* presupuesto: "Te quedan…" y la barra (#budget). El espacio va como padding para que el alto se anime sin saltos */
+.budget{padding-top:10px}
+.budget-text{font-size:15px;line-height:1.4;color:var(--text-2);overflow-wrap:anywhere}
+.budget-text strong{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;transition:color .25s ease}
+.budget-text #budgetOf{font-variant-numeric:tabular-nums}
+.budget.over .budget-text strong{color:var(--danger)}
+.budget-bar{margin-top:8px;height:6px;border-radius:999px;background:var(--tint);overflow:hidden}
+.budget-bar span{display:block;height:100%;width:0;border-radius:inherit;background:var(--primary);transition:width .3s cubic-bezier(.65,0,.35,1)}
+
+/* periodo: selector Día / Mes / Año (.segmented, también se usa en ingreso y en la hoja del informe) */
+.segmented{margin-top:18px;display:flex;gap:2px;padding:3px;background:#E9EEEC;border-radius:13px}
+.segmented button{flex:1;height:36px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text-2);font-size:14px;font-weight:500}
+.segmented button.on{background:var(--surface);border-color:var(--border);color:var(--primary-dark);font-weight:600}
+
+/* filtro de categorías (#filterBtn, #filterMenu) y "Descargar informe" a la derecha; si no entran, el botón baja */
+.filter{position:relative;margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.filter-btn{height:36px;padding:0 12px 0 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text);font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px}
+.filter-btn svg{color:var(--text-2);transition:transform .3s cubic-bezier(.65,0,.35,1)}
+.filter-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.menu{position:absolute;top:46px;left:0;z-index:6;width:250px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px;box-shadow:0 6px 20px rgba(29,41,45,.08)}
+/* si el menú no entra en la pantalla, app.js le pone max-height (fitMenu) y se desplaza por dentro */
+.menu{overflow-y:auto;overscroll-behavior:contain}
+.menu[data-closing]{pointer-events:none}
+.menu button{width:100%;height:44px;border:none;background:transparent;border-radius:10px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:500;text-align:left;color:var(--text)}
+.menu button:hover{background:#F1F4F2}
+.menu button.on{color:var(--primary-dark);font-weight:600}
+.menu svg{color:var(--primary)}
+
+/* títulos de sección y tarjetas (.card) */
+.section-title{font-size:15px;font-weight:600;margin-top:28px}
+.section-row{display:flex;align-items:center;justify-content:space-between;margin-top:26px}
+.section-row .section-title{margin-top:0}
+.link-btn{min-height:44px;padding:0 4px;border:none;background:transparent;color:var(--primary);font-size:14px;font-weight:600}
+.card{margin-top:10px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 16px;display:flex;flex-direction:column}
+.card.tight{margin-top:4px;padding:6px 8px}
+
+/* montos por categoría (#cats) */
+.cat-item{display:flex;align-items:center;gap:14px;height:46px;transition:opacity .15s}
+.cat-item.dim{opacity:.35}
+.cat-icon{width:34px;height:34px;border-radius:11px;background:var(--tint);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:none}
+.cat-name{flex:1;font-size:16px}
+.cat-amount{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.cat-amount.zero{color:var(--text-2);font-weight:500}
+
+/* últimos gastos (#recent) */
+.tx{width:100%;min-height:56px;padding:8px;border:none;border-radius:12px;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left}
+/* Igual que en categorías: el resaltado entra al instante y solo la salida se desvanece */
+.tx{transition:background-color .18s ease-out}
+.tx:hover{background:#F1F4F2;transition:background-color 0s}
+.tx-desc{font-size:16px;font-weight:500}
+.tx-meta{font-size:13px;color:var(--text-2);margin-top:1px}
+.tx-amount{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.empty{padding:18px 8px;font-size:14px;color:var(--text-2)}
+
+/* hojas: fondo oscuro y tarjeta centrada (.sheet-root, .sheet). Todas las hojas usan esto */
+.sheet-root{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}
+.backdrop{position:absolute;inset:0;border:none;padding:0;background:rgba(29,41,45,.38);animation:fade .2s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{position:relative;width:100%;max-width:400px;max-height:100%;overflow-y:auto;background:var(--surface);border-radius:24px;border:1px solid var(--border);box-shadow:0 18px 48px rgba(29,41,45,.18);padding:12px 20px 22px;display:flex;flex-direction:column;animation:up .24s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(10px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.grab{display:none}
+.sheet-head{margin-top:4px;display:flex;align-items:center;justify-content:space-between}
+.sheet-head h2{font-size:20px;font-weight:700}
+.icon-btn{width:44px;height:44px;margin-right:-10px;border:none;background:transparent;color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.field-label{margin-top:8px;font-size:14px;color:var(--text-2)}
+.field-label + .text-input{margin-top:6px}
+.amount-row{display:flex;align-items:center;gap:6px;border-bottom:2px solid var(--border);padding-bottom:6px;transition:border-color .2s ease}
+.amount-row:focus-within{border-bottom-color:var(--primary)} /* el foco se marca en la línea, sin recuadro */
+.amount-row span{font-size:34px;font-weight:700;color:var(--text)}
+.amount-row input{flex:1;min-width:0;border:none;background:transparent;font-size:34px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;padding:0;height:48px}
+.amount-row input:focus,.amount-row input:focus-visible{outline:none}
+.amount-row input{caret-color:transparent} /* sin cursor titilante: la línea verde ya indica que se está escribiendo */
+.amount-row input::placeholder{color:var(--text);opacity:.22}
+.text-input{height:52px;border:1px solid var(--border);border-radius:14px;background:var(--bg);padding:0 16px;font-size:17px;color:var(--text)}
+.field-label[for="desc"]{margin-top:20px}
+input::placeholder{color:#8A9599}
+/* hoja del gasto: chip de categoría y fecha del gasto */
+.cat-row{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.chip{height:44px;padding:0 14px 0 12px;border:1px solid #CFE0DC;border-radius:999px;background:var(--tint);color:var(--primary-dark);font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.chip.faded{opacity:.6}
+/* fecha del gasto (#expDate): el input invisible tapa todo el botón para que el calendario del celular se abra tocando en cualquier parte */
+.date-btn{position:relative;flex:none;height:44px;padding:0 12px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text-2);font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}
+.date-btn:hover{background:#F1F4F2}
+.date-btn:focus-within{outline:2px solid var(--primary);outline-offset:2px}
+.date-btn input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer}
+.date-btn input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;cursor:pointer}
+.picker{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+.picker button{height:44px;padding:0 14px 0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px}
+.picker button.on{border-color:var(--primary);background:var(--tint);color:var(--primary-dark)}
+.danger{margin-top:6px;height:48px;border:none;background:transparent;color:var(--danger);font-size:15px;font-weight:600}
+
+/* avisos (#toast) */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-size:14px;font-weight:600;white-space:nowrap;box-shadow:0 6px 20px rgba(29,41,45,.10)}
+.toast svg{color:var(--success)}
+
+/* pantalla de inicio: logo de los primeros 2 s (#splash) */
+.splash{position:fixed;inset:0;z-index:50;background:#fff;display:flex;align-items:center;justify-content:center;transition:opacity .4s ease}
+.splash.out{opacity:0;pointer-events:none}
+.logo{width:112px;height:112px;color:var(--primary);animation:pop .8s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+
+/* ingreso: iniciar sesión o registrarse (#login) */
+.login{max-width:430px;min-height:100dvh;margin:0 auto;padding:96px 24px 40px;display:flex;flex-direction:column}
+.brand{display:flex;flex-direction:column;align-items:center;gap:14px}
+.mark{width:64px;height:64px;color:var(--primary)}
+.wordmark{font-size:44px;font-weight:700;letter-spacing:-.01em;line-height:1;color:var(--primary)}
+.auth-tabs{margin-top:40px}
+.login form{margin-top:24px;display:flex;flex-direction:column}
+.login .field-label{margin-top:0;margin-bottom:6px}
+.login .text-input{margin-bottom:18px}
+.login .cta{margin-top:10px}
+.form-error{font-size:14px;color:var(--danger);margin:-6px 0 4px}
+.login #confirmField .text-input{display:block;width:100%}
+.login .text-input{width:100%}
+.wordmark{line-height:0}
+.wordmark-svg{width:203px;height:auto;display:block;color:var(--primary)}
+.segmented button{transition:background .15s,color .15s,border-color .15s}
+.segmented button:not(.on):hover{background:rgba(53,107,103,.08);color:var(--text)}
+
+/* animaciones: del ingreso a la pantalla principal */
+.login{transition:opacity .28s ease,transform .28s ease}
+.login.leaving{opacity:0;transform:translateY(-10px);pointer-events:none}
+.screen.enter{animation:rise .45s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* animaciones: al cambiar de período el contenido nuevo aparece suave (.swap) */
+.swap{animation:swap .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes swap{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* animaciones: pastilla blanca que se desliza en los selectores (.thumb, la crea app.js) */
+.segmented{position:relative}
+.segmented button{position:relative;z-index:1}
+.segmented .thumb{position:absolute;top:3px;bottom:3px;left:0;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:0 1px 2px rgba(29,41,45,.05);pointer-events:none;transition:transform .3s cubic-bezier(.2,.8,.2,1),width .3s cubic-bezier(.2,.8,.2,1)}
+/* ingreso: las pestañas de acceso, con la pastilla y el color del texto al ritmo del formulario */
+.auth-tabs .thumb{transition:transform .3s cubic-bezier(.65,0,.35,1),width .3s cubic-bezier(.65,0,.35,1)}
+.auth-tabs button{transition:color .25s ease,background .15s,border-color .15s}
+.segmented.has-thumb button.on{background:transparent;border-color:transparent}
+.segmented.has-thumb button:not(.on):hover{background:transparent;color:var(--text)}
+.cat-amount{transition:color .25s ease}
+
+/* calendario (#periodPicker): días, meses o años; .dot marca dónde hay gastos de la moneda activa */
+.period-wrap{position:relative;margin-top:18px}
+.period-wrap .segmented{margin-top:0}
+#periodGroup button{display:flex;align-items:center;justify-content:center;gap:3px}
+#periodGroup .caret{display:none;color:var(--text-2);transition:transform .2s ease}
+#periodGroup button.on .caret{display:block}
+#periodGroup button[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.period-picker{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:7;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:8px 10px 10px;box-shadow:0 10px 28px rgba(29,41,45,.12);transform-origin:top center;animation:pick-in .2s cubic-bezier(.2,.8,.2,1)}
+@keyframes pick-in{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.cal-head span{font-size:15px;font-weight:600}
+.cal-nav{width:44px;height:44px;border:none;border-radius:12px;background:transparent;color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:background-color .15s}
+.cal-nav:hover:not(:disabled){background:#F1F4F2;color:var(--text)}
+.cal-nav:disabled{opacity:.3;cursor:default}
+.cal-grid{display:grid;gap:2px}
+.cal-days{grid-template-columns:repeat(7,1fr)}
+.cal-months,.cal-years{grid-template-columns:repeat(3,1fr);gap:6px}
+.cal-wd{font-size:12px;font-weight:600;color:var(--text-2);text-align:center;padding:4px 0 6px}
+.cal-cell{position:relative;height:42px;border:none;border-radius:11px;background:transparent;color:var(--text);font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;transition:background-color .15s,color .15s}
+.cal-months .cal-cell,.cal-years .cal-cell{height:48px}
+.cal-cell:hover:not(:disabled):not(.on){background:#F1F4F2}
+.cal-cell.today{color:var(--primary-dark);font-weight:700}
+.cal-cell.on{background:var(--primary);color:#fff;font-weight:600}
+.cal-cell.dot::after{content:'';position:absolute;left:50%;bottom:5px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--success)}
+.cal-cell.on.dot::after{background:#fff}
+.cal-cell:disabled{color:#B9C2C0;cursor:default}
+.cal-today{width:100%;height:44px;margin-top:6px;border:none;border-radius:12px;background:var(--tint);color:var(--primary-dark);font-size:14px;font-weight:600;transition:background-color .15s}
+.cal-today:hover{background:#DCE9E5}
+
+/* si el sistema pide menos movimiento, sin animaciones (app.js también lo revisa con reduceMotion) */
+@media (prefers-reduced-motion:reduce){.acc-trigger,.acc-caret,.acc-menu button,.acc-menu a,.switch,.switch::after,.budget-bar span,.filter-btn svg,.login,.screen.enter,.logo,.sheet,.swap,.segmented .thumb,.period-picker{transition:none;animation:none}}
+
+/* hoja de categoria y botones chicos sin fondo (.ghost-btn) */
+.cat-head{margin-top:18px}
+.cat-head + .card{margin-top:4px}
+.ghost-btn{min-height:44px;padding:0 4px;border:none;background:transparent;color:var(--text-2);font-size:14px;font-weight:500;display:flex;align-items:center;gap:5px;transition:color .2s ease}
+.ghost-btn:hover{color:var(--primary-dark)}
+.sheet .form-error{margin:8px 0 0}
+
+/* hoja de categoria: grilla de íconos para la categoria personalizada (se marca igual que el selector de categoría del gasto) */
+.icon-label{margin-top:20px}
+.icon-grid{margin-top:8px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.icon-grid button{aspect-ratio:1;min-height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;justify-content:center;padding:0;transition:background-color .15s,border-color .15s,color .15s}
+.icon-grid button:hover{background:#F1F4F2}
+.icon-grid button.on{border-color:var(--primary);background:var(--tint);color:var(--primary-dark)}
+
+/* montos por categoría: hover, selección, lápiz y tacho */
+.cat-item{position:relative;margin:0 -8px;padding:0 8px;border-radius:12px;transition:background-color .18s ease-out,opacity .2s ease}
+/* El resaltado entra al instante (aunque el cursor pase rápido, cada fila se marca) y solo la salida se desvanece */
+.cat-item:hover{background:rgba(53,107,103,.07);transition:background-color 0s,opacity .2s ease}
+.cat-item.sel{background:rgba(53,107,103,.11)}
+.cat-item.dim:hover{opacity:.85}
+.cat-select{position:absolute;inset:0;padding:0;border:none;border-radius:12px;background:transparent;z-index:1}
+.cat-icon,.cat-name span,.cat-amount{pointer-events:none}
+.cat-icon{transition:transform .16s cubic-bezier(.2,.8,.2,1),background-color .18s ease-out}
+.cat-item:hover .cat-icon{transform:scale(1.07);background:#D7E7E3;transition:transform .08s ease-out,background-color 0s}
+.cat-name{display:flex;align-items:center;gap:2px;min-width:0}
+.pencil{position:relative;z-index:2;width:36px;height:44px;margin-right:-4px;padding:0;border:none;background:transparent;color:var(--text-2);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .2s ease,color .2s ease,visibility .2s}
+.cat-item.sel .pencil{opacity:1;visibility:visible} /* el lápiz solo aparece en la categoría seleccionada */
+.pencil:hover{color:var(--primary-dark)}
+.pencil.trash{margin-left:-6px}
+.pencil.trash:hover{color:var(--danger)}
+
+/* diálogos chicos (.sheet.confirm): eliminar categoria, importar, moneda, borrar datos */
+.sheet.confirm{max-width:360px}
+/* presupuesto: hoja del presupuesto (#budRoot) */
+.budget-label{margin-top:20px}
+#budRoot .cta{margin-top:24px}
+/* hoja del informe (#repRoot) */
+.report-label{margin-top:20px}
+.report-scope{margin-top:8px}
+.report-scope button{height:40px;font-size:15px}
+#repCats{margin-top:8px}
+.report-summary{margin-top:20px;font-size:15px;color:var(--text-2);font-variant-numeric:tabular-nums}
+.report-summary strong{font-weight:600;color:var(--text)}
+#repRoot .cta{margin-top:16px}
+/* respaldo (exportar e importar): diálogo de importar (#impRoot) */
+#impRoot .cta{margin-top:20px}
+#impRoot .form-error{margin:10px 0 0}
+/* moneda: lista de monedas (#curOptions, la arma app.js) */
+.cur-options{margin-top:14px;display:grid;grid-template-columns:1fr;gap:6px}
+.cur-options button{width:100%;border-radius:12px;padding:0 14px;gap:10px;justify-content:flex-start;text-align:left}
+.cur-sym{min-width:34px;font-weight:600;color:var(--primary-dark);font-variant-numeric:tabular-nums}
+.cur-name{flex:1;min-width:0}
+.cur-code{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--text-2)}
+/* presupuesto: interruptor "Repetir todos los meses" (#budRepeat) */
+.rep-row{margin-top:22px;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.rep-title{font-size:15px;font-weight:600}
+.rep-hint{margin-top:2px;font-size:13px;line-height:1.4;color:var(--text-2)}
+.switch{flex:none;width:48px;height:28px;padding:0;border:none;border-radius:999px;position:relative;background:#CBD5D3;transition:background-color .2s ease}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(29,41,45,.25);transition:transform .2s ease}
+.switch[aria-checked="true"]{background:var(--primary)}
+.switch[aria-checked="true"]::after{transform:translateX(20px)}
+/* texto y botones de los diálogos de confirmación (eliminar categoria, cerrar sesion y borrar datos) */
+.confirm-text{margin-top:6px;font-size:15px;line-height:1.45;color:var(--text-2)}
+.cta-danger{background:var(--danger)}
+.cta-danger:hover{background:#8A3E30}
+.confirm-cancel{justify-content:center;margin-top:6px;height:48px;border-radius:12px}
+
+/* reordenar categorias: la fila levantada (.lifted) y las que se corren (.shifting); las clases las pone app.js */
+#cats{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.cat-item.shifting{transition:transform .22s cubic-bezier(.2,.8,.2,1),background-color .2s ease,opacity .2s ease}
+.cat-item.lifted{z-index:4;scale:1.025;background:var(--surface);box-shadow:0 10px 28px rgba(29,41,45,.16);transition:scale .18s ease,box-shadow .2s ease,background-color .2s ease}
+.cat-item.settling{z-index:4;box-shadow:0 2px 6px rgba(29,41,45,.06);transition:transform .2s cubic-bezier(.2,.8,.2,1),scale .2s ease,box-shadow .2s ease}
+.cat-item.lifted .pencil,.cat-item.settling .pencil{opacity:0}
+body.reordering,body.reordering *{cursor:grabbing !important}
+body.reordering .cat-item:not(.lifted):not(.settling):hover{background:transparent}
+body.reordering .cat-item:not(.lifted):not(.settling):hover .cat-icon{transform:none;background:var(--tint)}
+body.reordering .pencil{opacity:0 !important}
+
+/* tablet (desde 768 px): resumen arriba y categorías y últimos gastos lado a lado */
+@media (min-width:768px){
+  .app{max-width:800px}
+  .screen{padding:44px 32px 64px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:24px;align-items:start}
+  .summary{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;align-items:end}
+  .summary header{grid-column:1}
+  .summary .actions{grid-column:2;margin-top:0}
+  .summary .actions .cta,.summary .actions .btn-secondary{padding:0 24px}
+  .summary .period-wrap{grid-column:1;width:100%;max-width:360px;margin-top:24px}
+  .summary .filter{grid-column:2;justify-self:end;margin-top:24px}
+  .summary .menu{left:0;right:auto} /* se abre debajo del selector, que queda a la izquierda del grupo */
+  .panel > .section-row:first-child{margin-top:30px;min-height:44px} /* los títulos de ambas columnas quedan a la misma altura */
+  .app{display:flex;flex-direction:column}
+  .login{min-height:0;width:100%;max-width:440px;margin:auto;padding:48px 40px 40px;background:var(--surface);border:1px solid var(--border);border-radius:28px;box-shadow:0 18px 48px rgba(29,41,45,.06)}
+}
+
+/* tablet o compu con poca altura: la tarjeta de ingreso no queda pegada a los bordes */
+@media (min-width:768px) and (max-height:640px){
+  .login{margin:32px auto} 
+}
+
+/* computadora (desde 1100 px): resumen fijo a la izquierda y dos columnas; todo un poco más grande */
+@media (min-width:1100px){
+  .app{max-width:1160px}
+  .screen{padding:56px 40px 72px;grid-template-columns:320px minmax(0,1fr) minmax(0,1fr);column-gap:32px}
+  .summary{grid-column:1;grid-row:1/span 2;display:block;position:sticky;top:40px}
+  .summary .actions{margin-top:22px}
+  .summary .period-wrap{max-width:none;margin-top:18px}
+  .summary .filter{margin-top:12px;justify-self:auto}
+  .summary .menu{left:0;right:auto}
+  .panel-cats{grid-column:2;grid-row:1}
+  .panel-recent{grid-column:3;grid-row:1}
+  .panel > .section-row:first-child{margin-top:0}
+
+  .app{max-width:1280px}
+  .screen{padding:64px 48px 80px;grid-template-columns:360px minmax(0,1fr) minmax(0,1fr);column-gap:40px}
+  .greeting{font-size:17px;gap:12px}
+  .mini-logo{width:40px;height:40px;border-radius:11px}
+  .mini-logo svg{width:24px;height:24px}
+  .period{font-size:20px;margin-top:6px}
+  .total{font-size:58px;margin-top:8px}
+  .cta,.btn-secondary{height:60px;font-size:18px;border-radius:18px}
+  .summary .actions{margin-top:28px}
+  .budget{padding-top:12px}
+  .budget-text{font-size:16px}
+  .budget-bar{height:8px}
+  .summary .period-wrap{margin-top:22px}
+  .summary .filter{margin-top:14px}
+  .segmented button{height:42px;font-size:15px}
+  .filter-btn{height:40px;font-size:15px;padding:0 14px 0 16px}
+  .section-title{font-size:17px}
+  .ghost-btn{font-size:15px}
+  .card{border-radius:24px;padding:10px 20px}
+  .card.tight{padding:8px 10px}
+  .panel > .section-row + .card{margin-top:8px}
+  .cat-item{height:56px;gap:16px;margin:0 -10px;padding:0 10px}
+  .cat-icon{width:40px;height:40px;border-radius:13px}
+  .cat-icon svg{width:22px;height:22px}
+  .cat-name,.cat-amount{font-size:17px}
+  .tx{min-height:66px;padding:10px 12px}
+  .tx-desc,.tx-amount{font-size:17px}
+  .tx-meta{font-size:14px;margin-top:2px}
+  .empty{font-size:15px;padding:22px 12px}
+}
+
+/* pantallas grandes (desde 1500 px) */
+@media (min-width:1500px){
+  .app{max-width:1400px}
+  .screen{grid-template-columns:380px minmax(0,1fr) minmax(0,1fr);column-gap:48px}
+  .total{font-size:64px}
+}

@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>berde.</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon/favicon-192.png">
+  <link rel="apple-touch-icon" href="icon/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- berde.: cada bloque tiene un comentario con el mismo nombre que la sección de app.js que lo maneja.
+       Los ids que usa app.js están anotados para encontrar el otro lado. -->
+  <div class="app">
+
+    <!-- pantalla de inicio: el logo que se ve 2 s al abrir (app.js: arranque) -->
+    <div class="splash" id="splash" aria-hidden="true">
+      <svg class="logo" viewBox="3.4 0 28 28" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><path d="M8 4.5v19"/><circle cx="14.5" cy="17" r="6.5"/><circle cx="27" cy="23.3" r="2" fill="currentColor" stroke="none"/></svg>
+    </div>
+
+    <!-- ingreso: iniciar sesión o registrarse (app.js: ingreso; #loginForm, #confirmField, #authBtn) -->
+    <section class="login" id="login" hidden>
+      <div class="brand">
+        <h1 class="wordmark"><svg class="wordmark-svg" viewBox="0 2.5 95 23" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="berde"><path d="M1.7 4.5v19"/><circle cx="8.2" cy="17" r="6.5"/><path d="M21.3 17H34.3A6.5 6.5 0 1 0 32.78 21.18"/><path d="M40.9 10.5v13M40.9 17A6.5 6.5 0 0 1 47.4 10.5"/><circle cx="60.5" cy="17" r="6.5"/><path d="M67 4.5v19"/><path d="M73.6 17H86.6A6.5 6.5 0 1 0 85.08 21.18"/><circle cx="92.6" cy="23.3" r="2" fill="currentColor" stroke="none"/></svg></h1>
+      </div>
+      <div class="segmented auth-tabs" role="group" aria-label="Acceso">
+        <button data-mode="login" class="on" aria-pressed="true">Iniciar sesión</button>
+        <button data-mode="register" aria-pressed="false">Registrarse</button>
+      </div>
+      <form id="loginForm" novalidate>
+        <label class="field-label" for="user">Usuario</label>
+        <input class="text-input" id="user" type="text" autocomplete="given-name" autocapitalize="words" spellcheck="false" maxlength="30">
+        <label class="field-label" for="pass">Contraseña</label>
+        <input class="text-input" id="pass" type="password" autocomplete="current-password">
+        <div id="confirmField" hidden>
+          <label class="field-label" for="pass2">Repetir contraseña</label>
+          <input class="text-input" id="pass2" type="password" autocomplete="new-password">
+        </div>
+        <p class="form-error" id="loginError" role="alert" hidden></p>
+        <button class="cta" id="authBtn" type="submit">Ingresar</button>
+      </form>
+    </section>
+
+    <!-- pantalla principal (app.js: renderMain). #home queda inert mientras hay una hoja abierta -->
+    <main class="screen" id="home" hidden>
+      <div class="summary">
+      <header>
+        <!-- saludo: es el botón del menu de cuenta -->
+        <div class="acc">
+          <button class="greeting acc-trigger" id="accBtn" data-action="toggle-account" aria-expanded="false" aria-label="Menú de cuenta">
+            <span class="mini-logo" aria-hidden="true"><svg viewBox="3.4 0 28 28" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M8 4.5v19"/><circle cx="14.5" cy="17" r="6.5"/><circle cx="27" cy="23.3" r="2" fill="currentColor" stroke="none"/></svg></span>
+            <span id="greeting"></span>
+            <svg class="acc-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <!-- menu de cuenta: se abre tocando el saludo #accBtn (app.js: menu de cuenta). Reportar un problema es #accFeedback: el link lo arma app.js al arrancar -->
+          <div class="menu acc-menu" id="accMenu" hidden>
+            <p class="acc-head" id="accName"></p>
+            <div class="acc-sep" role="separator"></div>
+            <button data-action="export-data"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span class="acc-label">Exportar datos</span></button>
+            <button data-action="open-import"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><span class="acc-label">Importar datos</span></button>
+            <button data-action="open-currency"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span class="acc-label">Moneda</span><span class="acc-value" id="accCur"></span></button>
+            <a id="accFeedback" target="_blank" rel="noopener" data-action="feedback" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0M12 8v4M12 16h.01"/></svg><span class="acc-label">Reportar un problema</span><span class="acc-ext"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></span></a>
+            <div class="acc-sep" role="separator"></div>
+            <button data-action="logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span class="acc-label">Cerrar sesión</span></button>
+            <button class="acc-danger" data-action="open-wipe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg><span class="acc-label">Borrar mis datos</span></button>
+            <div class="acc-sep" role="separator"></div>
+            <p class="acc-ver" id="accVersion"></p>
+          </div>
+        </div>
+        <h1 class="period" id="heading"></h1>
+        <p class="total" id="total"></p>
+        <!-- presupuesto: "Te quedan $X de $Y" y la barra (app.js: renderBudget; #budgetFill es la barra) -->
+        <div class="budget" id="budget" hidden>
+          <p class="budget-text"><span id="budgetPre">Te quedan</span> <strong id="budgetLeft"></strong> <span id="budgetMid">de</span> <span id="budgetOf"></span> <span id="budgetSuffix"></span></p>
+          <div class="budget-bar" aria-hidden="true"><span id="budgetFill"></span></div>
+        </div>
+      </header>
+
+      <!-- "Agregar gasto" y "Definir presupuesto" (#budgetBtn, el texto cambia a "Editar") -->
+      <div class="actions">
+        <button class="cta" data-action="open-new">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Agregar gasto
+        </button>
+        <button class="btn-secondary" id="budgetBtn" data-action="open-budget">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+          <span id="budgetBtnLabel">Definir presupuesto</span>
+        </button>
+      </div>
+
+      <!-- periodo: Día / Mes / Año; el segundo toque abre el calendario #periodPicker (app.js: calendario) -->
+      <div class="period-wrap">
+        <div class="segmented" id="periodGroup" role="group" aria-label="Período">
+          <button data-period="dia" aria-haspopup="dialog" aria-controls="periodPicker">Día<svg class="caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button data-period="mes" aria-haspopup="dialog" aria-controls="periodPicker">Mes<svg class="caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button data-period="anio" aria-haspopup="dialog" aria-controls="periodPicker">Año<svg class="caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="period-picker" id="periodPicker" role="dialog" aria-label="Elegir fecha" hidden></div>
+      </div>
+
+      <!-- filtro de categorías (#filterMenu) y "Descargar informe" (abre la hoja del informe) -->
+      <div class="filter">
+        <button class="filter-btn" id="filterBtn" data-action="toggle-filter" aria-haspopup="true" aria-expanded="false">
+          <span id="filterName">Todas las categorías</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="menu" id="filterMenu" hidden></div>
+        <button class="ghost-btn" data-action="open-report">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Descargar informe
+        </button>
+      </div>
+      </div>
+
+      <!-- montos por categoría (#cats); se mantienen apretadas para reordenar -->
+      <section class="panel panel-cats">
+      <div class="section-row cat-head">
+        <h2 class="section-title">Gastos por categoría</h2>
+        <button class="ghost-btn" data-action="open-cat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Nueva categoría
+        </button>
+      </div>
+      <div class="card" id="cats"></div>
+      </section>
+
+      <!-- últimos gastos (#recent) y "Ver todas" (#moreBtn) -->
+      <section class="panel panel-recent">
+      <div class="section-row">
+        <h2 class="section-title">Últimos gastos</h2>
+        <button class="ghost-btn" id="moreBtn" data-action="toggle-all" hidden></button>
+      </div>
+      <div class="card tight" id="recent"></div>
+      </section>
+    </main>
+
+    <!-- hoja del gasto: agregar o editar un gasto (app.js: hoja del gasto). La fecha del gasto es #expDate -->
+    <div class="sheet-root" id="sheetRoot" hidden>
+      <button class="backdrop" data-action="close-sheet" aria-label="Cerrar"></button>
+      <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <div class="grab"></div>
+        <div class="sheet-head">
+          <h2 id="sheetTitle">Nuevo gasto</h2>
+          <button class="icon-btn" data-action="close-sheet" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+
+        <label class="field-label" for="amount">Monto</label>
+        <div class="amount-row">
+          <span class="cur">$</span>
+          <input id="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+        </div>
+
+        <label class="field-label" for="desc">¿Qué compraste?</label>
+        <input id="desc" class="text-input" type="text" autocomplete="off" placeholder="Ejemplo: Supermercado">
+
+        <div class="cat-row">
+          <button class="chip" id="chip" data-action="toggle-picker" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path id="chipIcon" d=""/></svg>
+            <span id="chipName"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <label class="date-btn" for="expDate">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 10h18"/></svg>
+            <span id="dateLabel"></span>
+            <input type="date" id="expDate" aria-label="Fecha del gasto">
+          </label>
+        </div>
+        <div class="picker" id="picker" hidden></div>
+
+        <button class="cta" id="saveBtn" data-action="save">Guardar</button>
+        <button class="danger" id="deleteBtn" data-action="delete" hidden>Eliminar gasto</button>
+      </section>
+    </div>
+
+    <!-- hoja de categoria: crear una categoria personalizada o editar una (app.js: hoja de categoria) -->
+    <div class="sheet-root" id="catRoot" hidden>
+      <button class="backdrop" data-action="close-cat" aria-label="Cerrar"></button>
+      <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="catTitle">
+        <div class="grab"></div>
+        <div class="sheet-head">
+          <h2 id="catTitle">Nueva categoría</h2>
+          <button class="icon-btn" data-action="close-cat" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+
+        <label class="field-label" for="catName">Nombre</label>
+        <input id="catName" class="text-input" type="text" autocomplete="off" maxlength="24" placeholder="Nombre de la categoría">
+        <p class="form-error" id="catError" role="alert" hidden>Ya existe una categoría con ese nombre.</p>
+
+        <div id="catIconField">
+          <p class="field-label icon-label" id="catIconLabel">Icono</p>
+          <div class="icon-grid" id="catIcons" role="radiogroup" aria-labelledby="catIconLabel"></div>
+        </div>
+
+        <button class="cta" id="catSave" data-action="save-cat">Crear categoría</button>
+      </section>
+    </div>
+
+    <!-- presupuesto: hoja del presupuesto, con "Repetir todos los meses" #budRepeat (app.js: presupuesto) -->
+    <div class="sheet-root" id="budRoot" hidden>
+      <button class="backdrop" data-action="close-budget" aria-label="Cerrar"></button>
+      <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="budTitle" aria-describedby="budText">
+        <div class="grab"></div>
+        <div class="sheet-head">
+          <h2 id="budTitle">Definí tu presupuesto</h2>
+          <button class="icon-btn" data-action="close-budget" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="confirm-text" id="budText"></p>
+
+        <label class="field-label budget-label" for="budgetAmount">Presupuesto mensual</label>
+        <div class="amount-row">
+          <span class="cur">$</span>
+          <input id="budgetAmount" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+        </div>
+        <div class="rep-row">
+          <div><div class="rep-title">Repetir todos los meses</div><div class="rep-hint" id="budRepHint"></div></div>
+          <button class="switch" id="budRepeat" role="switch" aria-checked="true" aria-label="Repetir todos los meses" data-action="toggle-repeat"></button>
+        </div>
+
+        <button class="cta" id="budgetSave" data-action="save-budget">Guardar presupuesto</button>
+        <button class="danger" id="budgetRemove" data-action="remove-budget" hidden>Eliminar presupuesto</button>
+      </section>
+    </div>
+
+    <!-- hoja del informe: elegir qué entra en el PDF (app.js: hoja del informe, informe pdf) -->
+    <div class="sheet-root" id="repRoot" hidden>
+      <button class="backdrop" data-action="close-report" aria-label="Cerrar"></button>
+      <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="repTitle" aria-describedby="repText">
+        <div class="grab"></div>
+        <div class="sheet-head">
+          <h2 id="repTitle">Descargar informe</h2>
+          <button class="icon-btn" data-action="close-report" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="confirm-text" id="repText"></p>
+
+        <p class="field-label report-label" id="repScopeLabel">Qué incluir</p>
+        <div class="segmented report-scope" id="repScope" role="group" aria-labelledby="repScopeLabel">
+          <button data-action="report-scope" data-scope="all">Todo</button>
+          <button data-action="report-scope" data-scope="cats">Por categorías</button>
+        </div>
+
+        <div id="repCatsField" hidden>
+          <p class="field-label report-label">Elegí una o más categorías</p>
+          <div class="picker" id="repCats"></div>
+        </div>
+
+        <p class="report-summary" id="repSummary"></p>
+
+        <button class="cta" id="repDownload" data-action="download-report">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Descargar PDF
+        </button>
+      </section>
+    </div>
+
+    <!-- eliminar categoria: confirmación (app.js: eliminar categoria) -->
+    <div class="sheet-root" id="delRoot" hidden>
+      <button class="backdrop" data-action="close-delete-cat" aria-label="Cerrar"></button>
+      <section class="sheet confirm" role="alertdialog" aria-modal="true" aria-labelledby="delTitle" aria-describedby="delText">
+        <div class="sheet-head">
+          <h2 id="delTitle">¿Eliminar categoría?</h2>
+          <button class="icon-btn" data-action="close-delete-cat" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="confirm-text" id="delText"></p>
+        <button class="cta cta-danger" data-action="confirm-delete-cat">Eliminar categoría</button>
+        <button class="ghost-btn confirm-cancel" id="delCancel" data-action="close-delete-cat">Cancelar</button>
+      </section>
+    </div>
+
+    <!-- respaldo (exportar e importar): diálogo de importar; #importFile es el selector de archivo oculto -->
+    <div class="sheet-root" id="impRoot" hidden>
+      <button class="backdrop" data-action="close-import" aria-label="Cerrar"></button>
+      <section class="sheet confirm" role="dialog" aria-modal="true" aria-labelledby="impTitle" aria-describedby="impText">
+        <div class="sheet-head">
+          <h2 id="impTitle">¿Importar datos?</h2>
+          <button class="icon-btn" data-action="close-import" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="confirm-text" id="impText">Los gastos, categorías y presupuesto de este dispositivo se reemplazan por los del archivo. Si querés conservar los actuales, exportalos antes.</p>
+        <p class="form-error" id="impError" role="alert" hidden></p>
+        <button class="cta" data-action="pick-import"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Elegir archivo</button>
+        <button class="ghost-btn confirm-cancel" id="impCancel" data-action="close-import">Cancelar</button>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+      </section>
+    </div>
+
+    <!-- moneda: hoja para elegir la moneda activa; las opciones las arma app.js en #curOptions -->
+    <div class="sheet-root" id="curRoot" hidden>
+      <button class="backdrop" data-action="close-currency" aria-label="Cerrar"></button>
+      <section class="sheet confirm" role="dialog" aria-modal="true" aria-labelledby="curTitle" aria-describedby="curText">
+        <div class="sheet-head">
+          <h2 id="curTitle">Moneda</h2>
+          <button class="icon-btn" data-action="close-currency" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="confirm-text" id="curText">Cada moneda guarda sus propios gastos y presupuesto.</p>
+        <div class="picker cur-options" id="curOptions" role="group" aria-labelledby="curTitle"></div>
+      </section>
+    </div>
+
+    <!-- cerrar sesion y borrar datos: confirmación de "Borrar mis datos" -->
+    <div class="sheet-root" id="wipeRoot" hidden>
+      <button class="backdrop" data-action="close-wipe" aria-label="Cerrar"></button>
+      <section class="sheet confirm" role="alertdialog" aria-modal="true" aria-labelledby="wipeTitle" aria-describedby="wipeText">
+        <div class="sheet-head">
+          <h2 id="wipeTitle">¿Borrar todos tus datos?</h2>
+          <button class="icon-btn" data-action="close-wipe" aria-label="Cerrar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="confirm-text" id="wipeText">Se eliminan tus gastos y presupuestos de todas las monedas de este dispositivo. No se puede deshacer.</p>
+        <button class="cta cta-danger" data-action="confirm-wipe">Borrar todo</button>
+        <button class="ghost-btn confirm-cancel" id="wipeCancel" data-action="close-wipe">Cancelar</button>
+      </section>
+    </div>
+
+    <!-- avisos: cartelito de abajo (app.js: toast) -->
+    <div class="toast" id="toast" role="status" hidden></div>
+  </div>
+
+  <!-- jsPDF y autoTable solo se usan para el informe pdf; sin internet no cargan y la app avisa.
+       integrity: el navegador comprueba que el archivo sea exactamente esa versión (si cdnjs lo cambiara, no se ejecuta).
+       Si se cambia la versión, recalcular: curl -s URL | openssl dgst -sha512 -binary | openssl base64 -A -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" integrity="sha512-2/YdOMV+YNpanLCF5MdQwaoFRVbTmrJ4u4EpqS/USXAQNUDgI5uwYi6J98WVtJKcfe1AbgerygzDFToxAlOGEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="app.js"></script>
+</body>
+</html>
